@@ -9,10 +9,10 @@ import {
 
 const router = Router();
 
-router.post('/registerCustomer', registerCustomer);
-router.post('/login', loginCustomer);
-router.post('/forgotPassword', customerForgotPassword);
-router.post('/resetPassword', customerResetPassword);
-router.post('/verifyEmail', verifyUser);
+router.post('/register-customer', registerCustomer);
+router.post('/customer-login', loginCustomer);
+router.post('/forgot-password', customerForgotPassword);
+router.post('/reset-password', customerResetPassword);
+router.post('/verify-email', verifyUser);
 
 export default router;

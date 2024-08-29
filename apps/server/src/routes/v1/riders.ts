@@ -4,15 +4,15 @@ import { upload } from '../../middleware/upload';
 import {
   registerRyder,
   getRiderDetails,
-  login,
-  editRiderProfile,
+  loginRyder
 } from '../../controllers/riderControllers';
+import editRiderProfile from '../../controllers/riderControllers/editRiderProfile';
 
 const router = Router();
 
-router.post('/registerRider', upload, registerRyder);
-router.post('/login', login);
-router.get('/getRiders', auth, getRiderDetails);
-router.put('/editriderprofile/:userId', auth, editRiderProfile);
+router.post('/register-rider', upload, registerRyder);
+router.post("/rider-login", loginRyder);
+router.get('/get-riders', auth, getRiderDetails);
+router.put('/edit-rider-profile/:userId', auth, editRiderProfile);
 
 export default router;

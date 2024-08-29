@@ -34,7 +34,7 @@ To set up the project locally:
    ```
 
    `For more contextual information`:
-   Check the READMe.md files in the client and server folders for appropriate guidelines.
+   Check the README.md files in the client and server folders for appropriate guidelines.
 
 ## Contributing
 
