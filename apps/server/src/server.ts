@@ -1,9 +1,6 @@
 import app from "./app";
-// import dotenv from "dotenv";
 import { db, ENV } from "./config";
 import { HttpError } from "http-errors";
-
-// dotenv.config();
 
 const port = ENV.PORT || 3000;
 
