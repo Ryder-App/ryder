@@ -1,12 +1,19 @@
 {
   "name": "ryder",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Dispatch/Delivery Application",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client": "npm run dev --prefix apps/client",
+    "server": "concurrently \"npm run build-watch --prefix apps/server\" \"wait-on apps/server/dist && npm run dev --prefix apps/server\"",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "wait-on": "^8.0.0"
+  }
 }
