@@ -1,6 +1,7 @@
 import app from "./app";
 import { db, ENV } from "./config";
 import { HttpError } from "http-errors";
+import winstonLogger from "./utilities/helpers/winston";
 
 const port = ENV.PORT || 3000;
 
@@ -10,20 +11,22 @@ async function startServer() {
       // force:true
     })
       .then(() => {
-        console.log("Database is connected");
+        winstonLogger.info("Database is connected");
       })
       .catch((err: HttpError) => {
-        console.log(err);
+        winstonLogger.error(err);
       });
 
     app.listen(port, () => {
-      console.log(
+      winstonLogger.info(
         `\n\nRyder Server:\n\nApi docs, open @  http://localhost:${port}/api-docs`
       );
-      console.log(`\nLocal baseUrl, use @ http://localhost:${port}/api/`);
+      winstonLogger.info(
+        `\nLocal baseUrl, use @ http://localhost:${port}/api/`
+      );
     });
   } catch (err) {
-    console.log("Error starting the server", err);
+    winstonLogger.error("Error starting the server", err);
   }
 }
 
