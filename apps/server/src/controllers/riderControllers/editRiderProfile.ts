@@ -1,9 +1,9 @@
-import { Response } from "express";
-import { JwtPayload } from 'jsonwebtoken'
-import Ryder from "../../models/ryder";
-import { editRiderProfileSchema } from "../../utilities/validators";
-import { StatusCodes } from "http-status-codes";
-import asyncHandler from "../../middleware/asyncHandler";
+import { Response } from 'express';
+import { JwtPayload } from 'jsonwebtoken';
+import Ryder from '../../models/ryder';
+import { editRiderProfileSchema } from '../../utilities/validators';
+import { StatusCodes } from 'http-status-codes';
+import asyncHandler from '../../middleware/asyncHandler';
 
 const editRiderProfile = asyncHandler(
   async (req: JwtPayload, res: Response) => {
@@ -13,7 +13,7 @@ const editRiderProfile = asyncHandler(
 
     if (!userValidate.success) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "Invalid user data",
+        message: 'Invalid user data',
         details: userValidate.error.issues,
       });
     }
@@ -25,7 +25,7 @@ const editRiderProfile = asyncHandler(
     if (!user) {
       return res
         .status(StatusCodes.NOT_FOUND)
-        .json({ message: "User not found" });
+        .json({ message: 'User not found' });
     }
 
     user.firstName = firstName;
@@ -36,7 +36,7 @@ const editRiderProfile = asyncHandler(
     await user.save();
 
     return res.status(StatusCodes.OK).json({
-      message: "Profile updated successfully",
+      message: 'Profile updated successfully',
       user: {
         firstName: user.firstName,
         lastName: user.lastName,
@@ -45,7 +45,7 @@ const editRiderProfile = asyncHandler(
         userId: user.id,
       },
     });
-  }
+  },
 );
 
 export default editRiderProfile;

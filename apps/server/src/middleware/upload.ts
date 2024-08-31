@@ -1,8 +1,8 @@
-import ENV from "../config/env";
-import multer from "multer";
-import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
-import { endsWithFileExtension } from "../utilities/helpers/helpers";
+import ENV from '../config/env';
+import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { endsWithFileExtension } from '../utilities/helpers/helpers';
 
 interface MyParams {
   folder: string;
@@ -20,9 +20,9 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "Ryder-Uploads",
-    allowedFormats: ["pdf", "jpg", "jpeg", "png", "svg"],
-    transformation: [{ width: 500, height: 500, crop: "limit" }],
+    folder: 'Ryder-Uploads',
+    allowedFormats: ['pdf', 'jpg', 'jpeg', 'png', 'svg'],
+    transformation: [{ width: 500, height: 500, crop: 'limit' }],
   } as MyParams,
 });
 
@@ -31,12 +31,12 @@ export const upload = multer({
   fileFilter: (_req, file, cb) => {
     // Check file extensions
     if (!endsWithFileExtension(file.originalname)) {
-      return cb(new Error("Invalid file extension"));
+      return cb(new Error('Invalid file extension'));
     }
     cb(null, true);
   },
 }).fields([
-  { name: "bikeDoc", maxCount: 1 },
-  { name: "validIdCard", maxCount: 1 },
-  { name: "passportPhoto", maxCount: 1 },
+  { name: 'bikeDoc', maxCount: 1 },
+  { name: 'validIdCard', maxCount: 1 },
+  { name: 'passportPhoto', maxCount: 1 },
 ]);

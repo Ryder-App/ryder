@@ -8,7 +8,8 @@
     "prod": "cross-env NODE_ENV=production nodemon ./dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon ./dist/server.js",
     "build": "tsc",
-    "build-watch": "tsc -w"
+    "build-watch": "tsc -w",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
@@ -39,9 +40,11 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@eslint/js": "^9.9.1",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
+    "@types/eslint__js": "^8.42.3",
     "@types/express": "^4.17.21",
     "@types/http-errors": "^2.0.4",
     "@types/jsonwebtoken": "^9.0.6",
@@ -50,6 +53,9 @@
     "@types/nodemailer": "^6.4.15",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.6",
-    "@types/uuid": "^10.0.0"
+    "@types/uuid": "^10.0.0",
+    "eslint": "^9.9.1",
+    "globals": "^15.9.0",
+    "typescript-eslint": "^8.3.0"
   }
 }

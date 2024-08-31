@@ -81,7 +81,7 @@ Customers.init(
     sequelize: db,
     modelName: TABLE_NAME,
     timestamps: true,
-  }
+  },
 );
 
 export default Customers;

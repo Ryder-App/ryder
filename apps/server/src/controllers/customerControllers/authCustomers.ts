@@ -1,21 +1,21 @@
-import { Request, Response } from "express";
-import { Op } from "sequelize";
-import { v4 as uuidV4 } from "uuid";
-import { StatusCodes } from "http-status-codes";
+import { Request, Response } from 'express';
+import { Op } from 'sequelize';
+import { v4 as uuidV4 } from 'uuid';
+import { StatusCodes } from 'http-status-codes';
 import {
   passwordUtils,
   PasswordHarsher,
   generateLongString,
   sendRegistrationEmail,
   validatePassword,
-} from "../../utilities/helpers/helpers";
-import { customerRegisterSchema } from "../../utilities/validators";
-import Customers, { role } from "../../models/customers";
-import ENV, { APP_SECRET } from "../../config/env";
-import * as jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
-import asyncHandler from "../../middleware/asyncHandler";
-import winstonLogger from "../../utilities/helpers/winston";
+} from '../../utilities/helpers/helpers';
+import { customerRegisterSchema } from '../../utilities/validators';
+import Customers, { role } from '../../models/customers';
+import ENV, { APP_SECRET } from '../../config/env';
+import * as jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
+import asyncHandler from '../../middleware/asyncHandler';
+import winstonLogger from '../../utilities/helpers/winston';
 
 const registerCustomer = asyncHandler(async (req: Request, res: Response) => {
   const passwordRegex = passwordUtils.regex;
@@ -66,7 +66,7 @@ const registerCustomer = asyncHandler(async (req: Request, res: Response) => {
       await sendRegistrationEmail(user.email, info, url);
 
       return res.status(StatusCodes.OK).json({
-        message: "Registration Successful",
+        message: 'Registration Successful',
         user: {
           id: user.id,
           firstName: user.firstName,
@@ -76,7 +76,7 @@ const registerCustomer = asyncHandler(async (req: Request, res: Response) => {
       });
     } else {
       return res.status(StatusCodes.CONFLICT).send({
-        message: "This account already exists",
+        message: 'This account already exists',
       });
     }
   } else {
@@ -92,7 +92,7 @@ const loginCustomer = asyncHandler(async (req: Request, res: Response) => {
   if (!email || !password) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ message: "Email and password are required." });
+      .json({ message: 'Email and password are required.' });
   }
 
   const customer = await Customers.findOne({ where: { email } });
@@ -100,25 +100,25 @@ const loginCustomer = asyncHandler(async (req: Request, res: Response) => {
   if (!customer) {
     return res
       .status(StatusCodes.NOT_FOUND)
-      .json({ message: "Customer not found." });
+      .json({ message: 'Customer not found.' });
   }
 
   if (!customer.isVerified) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "You are not verified. Please verify your email address.",
+      message: 'You are not verified. Please verify your email address.',
     });
   }
 
   // Validate the password
   const isValidPassword = await PasswordHarsher.compare(
     password,
-    customer.password
+    customer.password,
   );
 
   if (!isValidPassword) {
     return res
       .status(StatusCodes.UNAUTHORIZED)
-      .json({ message: "Incorrect password." });
+      .json({ message: 'Incorrect password.' });
   }
 
   const token = jwt.sign(
@@ -131,17 +131,17 @@ const loginCustomer = asyncHandler(async (req: Request, res: Response) => {
       role: customer.role,
     },
     `${APP_SECRET}`,
-    { expiresIn: "1d" }
+    { expiresIn: '1d' },
   );
 
-  res.cookie("token", token, {
+  res.cookie('token', token, {
     httpOnly: true,
     secure: true,
-    sameSite: "strict",
+    sameSite: 'strict',
   });
 
   res.status(StatusCodes.OK).json({
-    message: "Login successful",
+    message: 'Login successful',
     user: {
       firstName: customer.firstName,
       lastName: customer.lastName,
@@ -162,7 +162,7 @@ const customerForgotPassword = asyncHandler(
 
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "No valid user found with the provided email address.",
+        message: 'No valid user found with the provided email address.',
       });
     }
 
@@ -174,7 +174,7 @@ const customerForgotPassword = asyncHandler(
 
     // Create a nodemailer transporter
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: 'gmail',
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_PASSWORD,
@@ -185,7 +185,7 @@ const customerForgotPassword = asyncHandler(
     const mailOptions = {
       from: process.env.GMAIL_USER,
       to: email,
-      subject: "Reset your password",
+      subject: 'Reset your password',
       text: `Hi, ${user.firstName} ${user.lastName},\n\nPlease use the following link to reset your password:\n\n${ENV.FE_BASE_URL}/reset-password?token=${longString}`,
     };
 
@@ -195,17 +195,17 @@ const customerForgotPassword = asyncHandler(
         winstonLogger.error(err);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
           message:
-            "Failed to send reset password email. Please try again later.",
+            'Failed to send reset password email. Please try again later.',
         });
       } else {
-        winstonLogger.info("Email sent: " + info.response);
+        winstonLogger.info('Email sent: ' + info.response);
         return res.status(StatusCodes.OK).json({
           message:
-            "Password reset link has been sent to your email if you have an account with us.",
+            'Password reset link has been sent to your email if you have an account with us.',
         });
       }
     });
-  }
+  },
 );
 
 const customerResetPassword = asyncHandler(
@@ -222,7 +222,7 @@ const customerResetPassword = asyncHandler(
 
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "No reset token found for this user or the token has expired.",
+        message: 'No reset token found for this user or the token has expired.',
       });
     }
 
@@ -232,15 +232,15 @@ const customerResetPassword = asyncHandler(
     const hashedPassword = await PasswordHarsher.hash(newPassword);
 
     user.password = hashedPassword;
-    user.resetToken = "";
+    user.resetToken = '';
     user.resetTokenExpiry = new Date(0);
     await user.save();
 
     return res.status(StatusCodes.OK).json({
       message:
-        "Password has been successfully reset. You can now login with your new password.",
+        'Password has been successfully reset. You can now login with your new password.',
     });
-  }
+  },
 );
 
 const verifyUser = asyncHandler(async (req: Request, res: Response) => {
@@ -252,18 +252,18 @@ const verifyUser = asyncHandler(async (req: Request, res: Response) => {
 
   if (!user) {
     return res.status(StatusCodes.NOT_FOUND).json({
-      message: "User not found or token is invalid.",
+      message: 'User not found or token is invalid.',
     });
   }
 
   user.isVerified = true;
-  user.verifyEmailToken = "";
+  user.verifyEmailToken = '';
 
   await user.save();
   const username = `${user.firstName} ${user.lastName}`;
 
   res.status(StatusCodes.OK).json({
-    message: "User successfully verified",
+    message: 'User successfully verified',
     username,
   });
 });

@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
-import { Op } from "sequelize";
-import { v4 as uuidV4 } from "uuid";
-import { StatusCodes } from "http-status-codes";
+import { Request, Response } from 'express';
+import { Op } from 'sequelize';
+import { v4 as uuidV4 } from 'uuid';
+import { StatusCodes } from 'http-status-codes';
 import {
   passwordUtils,
   PasswordHarsher,
@@ -9,14 +9,14 @@ import {
   generateLongString,
   uploadFile,
   sendRegistrationEmail,
-} from "../../utilities/helpers/helpers";
-import { riderRegisterSchema } from "../../utilities/validators";
-import Ryder, { role } from "../../models/ryder";
-import * as jwt from "jsonwebtoken";
-import ENV, { APP_SECRET } from "../../config/env";
-import nodemailer from "nodemailer";
-import asyncHandler from "../../middleware/asyncHandler";
-import winstonLogger from "../../utilities/helpers/winston";
+} from '../../utilities/helpers/helpers';
+import { riderRegisterSchema } from '../../utilities/validators';
+import Ryder, { role } from '../../models/ryder';
+import * as jwt from 'jsonwebtoken';
+import ENV, { APP_SECRET } from '../../config/env';
+import nodemailer from 'nodemailer';
+import asyncHandler from '../../middleware/asyncHandler';
+import winstonLogger from '../../utilities/helpers/winston';
 
 const registerRyder = asyncHandler(async (req: Request, res: Response) => {
   const passwordRegex = passwordUtils.regex;
@@ -47,13 +47,13 @@ const registerRyder = asyncHandler(async (req: Request, res: Response) => {
 
   if (userExist) {
     return res.status(StatusCodes.CONFLICT).send({
-      message: "This account already exists",
+      message: 'This account already exists',
     });
   }
 
-  const bikeDocUrl = await uploadFile("bikeDoc", req);
-  const validIdCardUrl = await uploadFile("validIdCard", req);
-  const passportPhotoUrl = await uploadFile("passportPhoto", req);
+  const bikeDocUrl = await uploadFile('bikeDoc', req);
+  const validIdCardUrl = await uploadFile('validIdCard', req);
+  const passportPhotoUrl = await uploadFile('passportPhoto', req);
 
   const hashedPassword = await PasswordHarsher.hash(password);
   const id = uuidV4();
@@ -85,7 +85,7 @@ const registerRyder = asyncHandler(async (req: Request, res: Response) => {
   await sendRegistrationEmail(user.email, info, url);
 
   return res.status(StatusCodes.OK).json({
-    message: "Registration Successful",
+    message: 'Registration Successful',
     user: {
       id: user.id,
       firstName: user.firstName,
@@ -101,7 +101,7 @@ const loginRyder = asyncHandler(async (req: Request, res: Response) => {
   if (!email || !password) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ message: "Email and password are required" });
+      .json({ message: 'Email and password are required' });
   }
 
   const rider = await Ryder.findOne({ where: { email } });
@@ -109,16 +109,16 @@ const loginRyder = asyncHandler(async (req: Request, res: Response) => {
   if (!rider) {
     return res
       .status(StatusCodes.NOT_FOUND)
-      .json({ message: "Rider not found" });
+      .json({ message: 'Rider not found' });
   }
 
   const isValidPassword = await PasswordHarsher.compare(
     password,
-    rider.password
+    rider.password,
   );
 
   if (!isValidPassword) {
-    return res.status(StatusCodes.CONFLICT).json({ message: "Wrong password" });
+    return res.status(StatusCodes.CONFLICT).json({ message: 'Wrong password' });
   }
 
   const token = jwt.sign(
@@ -132,18 +132,18 @@ const loginRyder = asyncHandler(async (req: Request, res: Response) => {
     },
     `${APP_SECRET}`,
     {
-      expiresIn: "1d",
-    }
+      expiresIn: '1d',
+    },
   );
 
-  res.cookie("token", token, {
+  res.cookie('token', token, {
     httpOnly: true,
     secure: true,
-    sameSite: "strict",
+    sameSite: 'strict',
   });
 
   return res.status(StatusCodes.OK).json({
-    message: "You have successfully logged in",
+    message: 'You have successfully logged in',
     role: rider.role,
     token: token,
   });
@@ -159,7 +159,7 @@ const riderForgotPassword = asyncHandler(
 
     if (!user) {
       return res.status(StatusCodes.NOT_FOUND).json({
-        message: "No valid user found with the provided email address.",
+        message: 'No valid user found with the provided email address.',
       });
     }
 
@@ -170,7 +170,7 @@ const riderForgotPassword = asyncHandler(
     await user.save();
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: 'gmail',
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_PASSWORD,
@@ -180,7 +180,7 @@ const riderForgotPassword = asyncHandler(
     const mailOptions = {
       from: process.env.GMAIL_USER,
       to: email,
-      subject: "Reset your password",
+      subject: 'Reset your password',
       text: `Hi, ${user.firstName} ${user.lastName},\n\nPlease use the following link to reset your password:\n\n${ENV.FE_BASE_URL}/reset-password?token=${longString}`,
     };
 
@@ -189,17 +189,17 @@ const riderForgotPassword = asyncHandler(
         winstonLogger.error(err);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
           message:
-            "Failed to send reset password email. Please try again later.",
+            'Failed to send reset password email. Please try again later.',
         });
       } else {
-        winstonLogger.info("Email sent: " + info.response);
+        winstonLogger.info('Email sent: ' + info.response);
         return res.status(StatusCodes.OK).json({
           message:
-            "Password reset link has been sent to your email if you have an account with us.",
+            'Password reset link has been sent to your email if you have an account with us.',
         });
       }
     });
-  }
+  },
 );
 
 const riderResetPassword = asyncHandler(async (req: Request, res: Response) => {
@@ -215,7 +215,7 @@ const riderResetPassword = asyncHandler(async (req: Request, res: Response) => {
 
   if (!user) {
     return res.status(StatusCodes.NOT_FOUND).json({
-      message: "No reset token found for this user or the token has expired.",
+      message: 'No reset token found for this user or the token has expired.',
     });
   }
 
@@ -224,13 +224,13 @@ const riderResetPassword = asyncHandler(async (req: Request, res: Response) => {
   const hashedPassword = await PasswordHarsher.hash(newPassword);
 
   user.password = hashedPassword;
-  user.resetToken = "";
+  user.resetToken = '';
   user.resetTokenExpiry = new Date(0);
   await user.save();
 
   return res.status(StatusCodes.OK).json({
     message:
-      "Password has been successfully reset. You can now login with your new password.",
+      'Password has been successfully reset. You can now login with your new password.',
   });
 });
 
@@ -244,24 +244,24 @@ const verifyUser = asyncHandler(async (req: Request, res: Response) => {
 
   if (!user) {
     return res.status(StatusCodes.NOT_FOUND).json({
-      message: "User not found or token is invalid.",
+      message: 'User not found or token is invalid.',
     });
   }
 
   if (token !== user.verifyEmailToken) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: "Token is invalid",
+      message: 'Token is invalid',
     });
   }
 
   user.isVerified = true;
-  user.verifyEmailToken = "";
+  user.verifyEmailToken = '';
 
   await user.save();
   const username = `${user.firstName} ${user.lastName}`;
 
   return res.status(StatusCodes.OK).json({
-    message: "User successfully verified",
+    message: 'User successfully verified',
     username,
   });
 });
