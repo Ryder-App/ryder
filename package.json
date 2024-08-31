@@ -9,7 +9,6 @@
     "client": "npm run dev --prefix apps/client",
     "server": "concurrently \"npm run build-watch --prefix apps/server\" \"wait-on apps/server/dist && npm run dev --prefix apps/server\"",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "lint": "eslint .",
     "format": "prettier --write .",
     "prepare": "husky install"
   },
@@ -24,8 +23,8 @@
     "wait-on": "^8.0.0"
   },
   "lint-staged": {
-    "**/*.{ts,js,json,css,md}": [
-      "prettier --write"
+    "**/*.{ts,tsx,js,jsx,json,css,md}": [
+      "prettier --ignore-unknown --write"
     ]
   }
 }
