@@ -13,5 +13,5 @@ export const db = new Sequelize(
     dialectOptions: {
       encrypt: true,
     },
-  }
+  },
 );

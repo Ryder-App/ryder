@@ -6,7 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 export const auth = async (
   req: JwtPayload,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const token = req.headers.authorization;
